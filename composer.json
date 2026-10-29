@@ -14,5 +14,11 @@
     "psr-4": {
       "OCA\\RotDrop\\DevScripts\\PhpToTypeScript\\": "src/"
     }
+  },
+  "archive": {
+    "exclude": [
+      "/vendor",
+      "/composer.lock"
+    ]
   }
 }
