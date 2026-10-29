@@ -118,12 +118,16 @@ application consumers; they are not applied by installing this repository:
 
 ```sh
 composer install
+composer test
 composer validate --strict
 composer dump-autoload --optimize --strict-psr
 find src -name '*.php' -exec php -l {} \;
 composer audit
 ```
 
-There is no test suite in the original converter directory or this initial
-package. Full database-metadata verification requires the consuming Nextcloud
+The tests exercise the converter against small standalone PHP fixtures. Full
+database-metadata verification still requires the consuming Nextcloud
 application and its existing runtime configuration.
+
+GitHub Actions runs `composer test` on PHP 8.2 through 8.5 for pushes and pull requests.
+The Tests workflow can also be started manually.
