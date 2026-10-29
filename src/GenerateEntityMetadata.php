@@ -73,12 +73,16 @@ class GenerateEntityMetadata
    * the PHP namespace prefix).
    *
    * @param ConsoleOutputInterface $output
+   *
+   * @param string $metaDataForwarderFolder Folder below the output prefix
+   * which receives the entity-metadata forwarder.
    */
   public function __construct(
     private string $devScriptsFolder,
     private string $phpNamespacePrefix,
     private string $outputPrefix,
     private ConsoleOutputInterface $output,
+    private string $metaDataForwarderFolder = self::META_DATA_FORWARDER_FOLDER,
   ) {
   }
 
@@ -91,7 +95,7 @@ class GenerateEntityMetadata
    */
   public function exportEntityMap(): string
   {
-    $entityMapNamespace = str_replace(Constants::PATH_SEP, '.', self::META_DATA_FORWARDER_FOLDER);
+    $entityMapNamespace = str_replace(Constants::PATH_SEP, '.', $this->metaDataForwarderFolder);
 
     return "declare namespace {$entityMapNamespace}." . self::META_DATA_NAME . " {
 
@@ -120,10 +124,10 @@ class GenerateEntityMetadata
     }
     $entityParentNamespace = substr($this->entityNamespace, 0, strrpos($this->entityNamespace, '\\'));
     $entityParentPath = str_replace('\\', Constants::PATH_SEP, $entityParentNamespace);
-    $forwarderEntityPath = implode(Constants::PATH_SEP, array_fill(0, count(explode(Constants::PATH_SEP, self::META_DATA_FORWARDER_FOLDER)), '..'));
+    $forwarderEntityPath = implode(Constants::PATH_SEP, array_fill(0, count(explode(Constants::PATH_SEP, $this->metaDataForwarderFolder)), '..'));
     $forwarderEntityPath .= "/{$entityParentPath}";
 
-    $path = $this->outputPrefix . '/' . self::META_DATA_FORWARDER_FOLDER . '/' . self::META_DATA_NAME;
+    $path = $this->outputPrefix . '/' . $this->metaDataForwarderFolder . '/' . self::META_DATA_NAME;
     mkdir($path, recursive: true);
 
     $forwarderEntityMetadataPath = self::META_DATA_NAME;

@@ -101,12 +101,21 @@ class PhpToTypeScript extends Command
    *
    * @param array $scopedNamespaces Scoped namespaces which need special
    * handling by the DatabaseEntityCollector class, defaults to [].
+   *
+   * @param array $collectors The collector classes to use.
+   *
+   * @param string $metaDataForwarderFolder Output folder, relative to the
+   * module root, of the entity-metadata forwarder. It has to match the
+   * namespace of the toolkit's Doctrine\ORM namespace after stripping the
+   * app-namespace prefix, defaults to
+   * GenerateEntityMetadata::META_DATA_FORWARDER_FOLDER.
    */
   public function __construct(
     protected string $devScriptsFolder,
     protected array $excludes = [],
     protected array $scopedNamespaces = [],
     protected array $collectors = self::DEFAULT_COLLECTORS,
+    protected string $metaDataForwarderFolder = GenerateEntityMetadata::META_DATA_FORWARDER_FOLDER,
   ) {
     parent::__construct();
   }
@@ -340,6 +349,7 @@ class PhpToTypeScript extends Command
           outputPrefix: $outputPrefix . self::TS_MODULES_DIR,
           output: $output,
           devScriptsFolder: $this->devScriptsFolder,
+          metaDataForwarderFolder: $this->metaDataForwarderFolder,
         );
         $metadataGenerator->generateSparseMetadata();
         $entityMapNamespace = $metadataGenerator->exportEntityMap();
