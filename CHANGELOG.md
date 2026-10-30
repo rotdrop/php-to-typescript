@@ -13,6 +13,8 @@ this file was not changed since the previous tag.
 
 ## [Unreleased]
 
+## [1.0.0] - 2026-10-30
+
 ### Added
 
 - Extract the PHP-to-TypeScript converter from
