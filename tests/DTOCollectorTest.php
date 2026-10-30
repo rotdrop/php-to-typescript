@@ -23,10 +23,10 @@ class DTOCollectorTest extends TestCase
       ->transformers([DtoTransformer::class]);
     $collector = new DTOCollector($config);
 
-    foreach (['UnscopedDTO', 'LegacyDTO'] as $name) {
+    foreach (['UnscopedDTO'] as $name) {
       self::assertNotNull($collector->getTransformedType(new ReflectionClass('OCA\\TestApp\\DTO\\' . $name)));
     }
-    foreach (['ScopedDTO', 'UnrelatedDTO'] as $name) {
+    foreach (['ScopedDTO', 'LegacyDTO', 'UnrelatedDTO'] as $name) {
       self::assertNull($collector->getTransformedType(new ReflectionClass('OCA\\TestApp\\DTO\\' . $name)));
     }
   }

@@ -81,7 +81,7 @@ class PhpToTypeScriptTest extends TestCase
     self::assertStringContainsString('The "--output-prefix" option is mandatory.', $output->fetch());
   }
 
-  public function test_it_collects_scoped_and_unscoped_toolkit_dtos(): void
+  public function test_it_collects_only_scoped_toolkit_dtos_when_scoped(): void
   {
     $command = new PhpToTypeScript(
       devScriptsFolder: __DIR__,
@@ -97,8 +97,9 @@ class PhpToTypeScriptTest extends TestCase
     self::assertSame(0, $command->run($input, new ConsoleOutput()));
 
     $types = file_get_contents($this->outputDir . '/php-types.d.ts');
-    foreach (['ScopedDTO', 'UnscopedDTO', 'LegacyDTO'] as $name) {
-      self::assertStringContainsString("export type {$name} = {", $types);
+    self::assertStringContainsString('export type ScopedDTO = {', $types);
+    foreach (['UnscopedDTO', 'LegacyDTO'] as $name) {
+      self::assertStringNotContainsString("export type {$name}", $types);
     }
     self::assertStringNotContainsString('export type UnrelatedDTO', $types);
   }
