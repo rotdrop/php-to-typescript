@@ -13,6 +13,8 @@ this file was not changed since the previous tag.
 
 ## [Unreleased]
 
+## [2.0.2] - 2026-10-30
+
 ### Fixed
 
 - Install OCP and the patch plugin transitively when this library is used as
