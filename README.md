@@ -27,6 +27,10 @@ Once a release is available, use its version constraint instead of `*@dev`.
 Composer autoloads the existing namespace; no manual `addPsr4()` is needed for
 the converter.
 
+For local development, Composer accepts Nextcloud OCP's `dev-stable33`,
+`dev-stable34`, and `dev-stable35` branches and selects a PHP-compatible version.
+The bundled `OCP\Util::getVersion()` patch still reports `35.0.0.0`.
+
 ## Usage and preserved integrations
 
 This is a library, not a standalone executable. Keep the application's
