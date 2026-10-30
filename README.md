@@ -19,7 +19,7 @@ Until a release is published on Packagist, configure this VCS repository in
 the consuming project's Composer manifest:
 
 ```sh
-composer config repositories.rotdrop-php-to-typescript vcs https://github.com/rotdrop/php-to-typescript-
+composer config repositories.rotdrop-php-to-typescript vcs https://github.com/rotdrop/php-to-typescript
 composer require --dev 'rotdrop/php-to-typescript:*@dev'
 ```
 
