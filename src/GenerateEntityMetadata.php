@@ -22,6 +22,7 @@
 
 namespace OCA\RotDrop\DevScripts\PhpToTypeScript;
 
+use Closure;
 use ReflectionClass;
 use UnexpectedValueException;
 
@@ -72,6 +73,10 @@ class GenerateEntityMetadata
    *
    * @param string $metaDataForwarderFolder Folder below the output prefix
    * which receives the entity-metadata forwarder.
+   *
+   * @param Closure|null $entityManagerFactory Callback returning the
+   * (Doctrine) entity manager. If null, the legacy CAFEVDB-specific
+   * bootstrap is used.
    */
   public function __construct(
     private string $devScriptsFolder,
@@ -79,6 +84,7 @@ class GenerateEntityMetadata
     private string $outputPrefix,
     private ConsoleOutputInterface $output,
     private string $metaDataForwarderFolder = self::META_DATA_FORWARDER_FOLDER,
+    private ?Closure $entityManagerFactory = null,
   ) {
   }
 
@@ -424,6 +430,10 @@ export {
    */
   private function getEntityManager():object
   {
+    if ($this->entityManagerFactory !== null) {
+      return ($this->entityManagerFactory)();
+    }
+
     $appDir = $this->devScriptsFolder . '/..';
 
     $cafevDbUser = getenv('CAFEVDB_USER');

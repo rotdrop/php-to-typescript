@@ -27,6 +27,7 @@ use OCA\RotDrop\DevScripts\PhpToTypeScript\Collectors\DatabaseEntityCollector;
 use OCA\RotDrop\DevScripts\PhpToTypeScript\Transformers\ClassConstantsTransformer;
 use OCA\RotDrop\DevScripts\PhpToTypeScript\Transformers\DtoTransformer;
 use OCA\RotDrop\DevScripts\PhpToTypeScript\Transformers\EnumTransformer;
+use Closure;
 use DateTime;
 use DateTimeImmutable;
 
@@ -109,6 +110,10 @@ class PhpToTypeScript extends Command
    * namespace of the toolkit's Doctrine\ORM namespace after stripping the
    * app-namespace prefix, defaults to
    * GenerateEntityMetadata::META_DATA_FORWARDER_FOLDER.
+   *
+   * @param Closure|null $entityManagerFactory Callback returning the
+   * entity manager used to read the entity metadata. If null, the
+   * CAFEVDB-specific default bootstrap is used.
    */
   public function __construct(
     protected string $devScriptsFolder,
@@ -116,6 +121,7 @@ class PhpToTypeScript extends Command
     protected array $scopedNamespaces = [],
     protected array $collectors = self::DEFAULT_COLLECTORS,
     protected string $metaDataForwarderFolder = GenerateEntityMetadata::META_DATA_FORWARDER_FOLDER,
+    protected ?Closure $entityManagerFactory = null,
   ) {
     parent::__construct();
   }
@@ -356,6 +362,7 @@ class PhpToTypeScript extends Command
           output: $output,
           devScriptsFolder: $this->devScriptsFolder,
           metaDataForwarderFolder: $this->metaDataForwarderFolder,
+          entityManagerFactory: $this->entityManagerFactory,
         );
         $metadataGenerator->generateSparseMetadata();
         $entityMapNamespace = $metadataGenerator->exportEntityMap();
