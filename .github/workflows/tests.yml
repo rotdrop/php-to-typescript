@@ -9,6 +9,36 @@ permissions:
   contents: read
 
 jobs:
+  code-style:
+    name: PHP code style
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          tools: composer:v2
+          coverage: none
+
+      - name: Install dependencies
+        run: composer install --no-interaction --prefer-dist --no-progress
+
+      - name: Install PHPCS
+        run: composer bin phpcs install
+
+      - name: Install PHPMD
+        run: composer bin phpmd install
+
+      - name: Run PHPCS
+        run: composer phpcs
+
+      - name: Run PHPMD
+        run: composer phpmd
+
   tests:
     name: PHP ${{ matrix.php }}
     runs-on: ubuntu-latest
