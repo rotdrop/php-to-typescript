@@ -136,3 +136,12 @@ application and its existing runtime configuration.
 
 GitHub Actions runs `composer test` on PHP 8.2 through 8.5 for pushes and pull requests.
 The Tests workflow can also be started manually.
+## Releases
+
+Record changes under `## [Unreleased]` in [CHANGELOG.md](CHANGELOG.md). To
+release, rename that section to `## [X.Y.Z] - YYYY-MM-DD` (or
+`## [X.Y.Z-rcN] - YYYY-MM-DD` for a release candidate), commit, and push a tag
+`vX.Y.Z` (or `vX.Y.Z-rcN`). The `Release`/`Prerelease` workflows run the tests,
+verify via `scripts/check-changelog.sh` that the matching section exists and
+that `CHANGELOG.md` changed since the previous tag, and publish a GitHub
+(pre)release using that section as release notes.
