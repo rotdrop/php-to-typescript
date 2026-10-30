@@ -30,16 +30,12 @@ use Symfony\Component\Console\Output\ConsoleOutputInterface;
 use Symfony\Component\Console\Output\ConsoleSectionOutput;
 use Symfony\Component\Console\Output\OutputInterface;
 
-use OCA\RotDrop\Toolkit\Constants;
-
 /**
  * Generate enough meta-data for TypeScript to be able to define getters for
  * to-one and iterators for to-many associations.
  */
 class GenerateEntityMetadata
 {
-  use \OCA\RotDrop\Toolkit\Traits\CamelCaseToDashesTrait;
-
   private array $entityMetaInfo = [];
 
   private string $entityNamespace;
@@ -95,7 +91,7 @@ class GenerateEntityMetadata
    */
   public function exportEntityMap(): string
   {
-    $entityMapNamespace = str_replace(Constants::PATH_SEP, '.', $this->metaDataForwarderFolder);
+    $entityMapNamespace = str_replace('/', '.', $this->metaDataForwarderFolder);
 
     return "declare namespace {$entityMapNamespace}." . self::META_DATA_NAME . " {
 
@@ -123,8 +119,8 @@ class GenerateEntityMetadata
       throw new UnexpectedValueException('Entity-namespace is null, did you call ' . __CLASS__ . '::generateSparseMetadata()?');
     }
     $entityParentNamespace = substr($this->entityNamespace, 0, strrpos($this->entityNamespace, '\\'));
-    $entityParentPath = str_replace('\\', Constants::PATH_SEP, $entityParentNamespace);
-    $forwarderEntityPath = implode(Constants::PATH_SEP, array_fill(0, count(explode(Constants::PATH_SEP, $this->metaDataForwarderFolder)), '..'));
+    $entityParentPath = str_replace('\\', '/', $entityParentNamespace);
+    $forwarderEntityPath = implode('/', array_fill(0, count(explode('/', $this->metaDataForwarderFolder)), '..'));
     $forwarderEntityPath .= "/{$entityParentPath}";
 
     $path = $this->outputPrefix . '/' . $this->metaDataForwarderFolder . '/' . self::META_DATA_NAME;
@@ -141,7 +137,7 @@ import type { EntityReference, EntityReferenceCollection } from './EntitySeriali
     $entityTypeExports = [];
     $entityTypeMap = '';
     foreach ($this->entityMetaInfo as $entity => $entityInfo) {
-      $upcaseEntity = strtoupper(self::camelCaseToDashes($entity, '_'));
+      $upcaseEntity = strtoupper(preg_replace('/([A-Z]|[0-9]+|[[:punct:]]+)/', '_$1', lcfirst($entity)));
 
       $metadataForwarder .= "import {
    type ENTITY_NAME as {$upcaseEntity}_ENTITY_NAME,
@@ -428,7 +424,7 @@ export {
    */
   private function getEntityManager():object
   {
-    $appDir = $this->devScriptsFolder . Constants::PATH_SEP . '..';
+    $appDir = $this->devScriptsFolder . '/..';
 
     $cafevDbUser = getenv('CAFEVDB_USER');
     if ($cafevDbUser === false) {

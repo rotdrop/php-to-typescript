@@ -67,6 +67,11 @@ properties. `--as-modules` also generates `php-modules/` alongside
 configuration when using php-scoper. Supply `--ns-prefix` explicitly, as in
 the existing build-system invocation.
 
+For example, `--ns-prefix='OCA\MyApp' --scoped-ns-prefix='Wrapped'` also
+recognizes DTOs extending
+`OCA\MyApp\Wrapped\OCA\RotDrop\Toolkit\DTO\AbstractDTO`.
+Unscoped `OCA\RotDrop\Toolkit` and legacy `OCA\MyApp\Toolkit` DTOs remain supported.
+
 Host requirements are intentionally unchanged:
 
 - Discovered application classes and their dependencies must be autoloadable.
@@ -74,8 +79,8 @@ Host requirements are intentionally unchanged:
   this package does not bundle it.
 - The default collectors include `DatabaseEntityCollector`. With
   `--as-modules`, this triggers `GenerateEntityMetadata`, which still needs
-  `OCA\RotDrop\Toolkit\Constants`, `CamelCaseToDashesTrait`, and the existing
-  Nextcloud/CAFEVDB bootstrap, encryption service, and entity manager.
+  the existing Nextcloud/CAFEVDB bootstrap, encryption service, and entity manager.
+  Its path and name formatting does not require unscoped toolkit utilities.
   It reads `CAFEVDB_USER` (or the POSIX user) and the application's
   `.clipassword`, as before. Do not commit credentials.
 - Applications not using that metadata integration should explicitly select
