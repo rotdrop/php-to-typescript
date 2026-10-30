@@ -6,6 +6,7 @@
 namespace Tests;
 
 use OCA\RotDrop\DevScripts\PhpToTypeScript\PhpToTypeScript;
+use OCA\RotDrop\DevScripts\PhpToTypeScript\Collectors\DTOCollector;
 use PHPUnit\Framework\TestCase;
 use Spatie\TypeScriptTransformer\Collectors\EnumCollector;
 use Symfony\Component\Console\Input\ArrayInput;
@@ -13,6 +14,8 @@ use Symfony\Component\Console\Output\BufferedOutput;
 use Symfony\Component\Console\Output\ConsoleOutput;
 
 require_once __DIR__ . '/Fixtures/BasicTypes.php';
+require_once __DIR__ . '/Stubs/Toolkit.php';
+require_once __DIR__ . '/Fixtures/ToolkitDtos.php';
 
 class PhpToTypeScriptTest extends TestCase
 {
@@ -76,5 +79,27 @@ class PhpToTypeScriptTest extends TestCase
 
     self::assertSame(2, $command->run($input, $output));
     self::assertStringContainsString('The "--output-prefix" option is mandatory.', $output->fetch());
+  }
+
+  public function test_it_collects_scoped_and_unscoped_toolkit_dtos(): void
+  {
+    $command = new PhpToTypeScript(
+      devScriptsFolder: __DIR__,
+      collectors: [DTOCollector::class],
+    );
+    $input = new ArrayInput([
+      '--output-prefix' => $this->outputDir,
+      '--source-dir' => [__DIR__ . '/Fixtures'],
+      '--ns-prefix' => 'OCA\\TestApp',
+      '--scoped-ns-prefix' => '\\Wrapped\\',
+    ], $command->getDefinition());
+
+    self::assertSame(0, $command->run($input, new ConsoleOutput()));
+
+    $types = file_get_contents($this->outputDir . '/php-types.d.ts');
+    foreach (['ScopedDTO', 'UnscopedDTO', 'LegacyDTO'] as $name) {
+      self::assertStringContainsString("export type {$name} = {", $types);
+    }
+    self::assertStringNotContainsString('export type UnrelatedDTO', $types);
   }
 }
