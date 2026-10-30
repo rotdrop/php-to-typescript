@@ -13,9 +13,17 @@ this file was not changed since the previous tag.
 
 ## [Unreleased]
 
+## [1.0.1] - 2026-10-30
+
 ### Added
 
-- PHPMD and PHP_CodeSniffer development tools with the CAFEVDB patches and rulesets.
+- PHPMD and PHP_CodeSniffer development tools with the CAFEVDB patches and rulesets (#6, #7).
+
+### Fixed
+
+- `DTOCollector` checks only the installed `AbstractDTO` variant (unscoped or
+  php-scoper-wrapped) instead of autoloading several candidates, and no longer
+  substitutes the app namespace (#8).
 
 ## [1.0.0] - 2026-10-30
 
