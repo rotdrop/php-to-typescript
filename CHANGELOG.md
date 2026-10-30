@@ -13,6 +13,19 @@ this file was not changed since the previous tag.
 
 ## [Unreleased]
 
+## [2.0.1] - 2026-10-30
+
+### Added
+
+- Nextcloud OCP development dependency with PSR-4 autoloading and a Composer
+  patch that makes `OCP\Util::getVersion()` return `35.0.0.0` without a server
+  bootstrap.
+
+### Fixed
+
+- Allow OCP's `dev-stable33`, `dev-stable34`, and `dev-stable35` branches so
+  Composer can select a PHP-compatible version, including on PHP 8.2.
+
 ## [2.0.0] - 2026-10-30
 
 ### Added
