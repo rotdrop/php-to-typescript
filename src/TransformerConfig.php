@@ -101,6 +101,10 @@ class TransformerConfig extends TypeScriptTransformerConfig
    * The parent class always appends the upstream default collector, so keep
    * track of the collectors ourselves in order to append our own variant.
    *
+   * @param array $collectors
+   *
+   * @return static
+   *
    * {@inheritdoc}
    */
   public function collectors(array $collectors): static
@@ -219,6 +223,13 @@ class TransformerConfig extends TypeScriptTransformerConfig
     return $replacements;
   }
 
+  /**
+   * Set the default inline type replacements.
+   *
+   * @param array $replacements
+   *
+   * @return static
+   */
   public function defaultTypeReplacements(array $replacements): static
   {
     if ($this->scopedNamespacePrefix !== null) {

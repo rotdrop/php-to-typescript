@@ -166,7 +166,7 @@ class ClassConstantsTransformer implements Transformer
       $this->resolveConstants($class),
       function (string $carry, ReflectionClassConstant $constant) {
         $value = $constant->getValue();
-        // @todo: also support non-scalars
+        // Non-scalar constants are currently omitted.
         if (!is_scalar($value)) {
           return $carry;
         }

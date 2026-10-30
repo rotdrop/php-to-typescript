@@ -143,6 +143,12 @@ class DtoTransformer extends BaseTransformer
   /**
    * Same as upstream, but fall back to "unknown" instead of "any".
    *
+   * @param ReflectionMethod|ReflectionProperty|ReflectionParameter $reflection
+   * @param MissingSymbolsCollection $missingSymbolsCollection
+   * @param TypeProcessor ...$typeProcessors
+   *
+   * @return Type|null
+   *
    * {@inheritdoc}
    */
   protected function reflectionToType(
