@@ -27,9 +27,40 @@ Once a release is available, use its version constraint instead of `*@dev`.
 Composer autoloads the existing namespace; no manual `addPsr4()` is needed for
 the converter.
 
-For local development, Composer accepts Nextcloud OCP's `dev-stable33`,
+OCP and the patch plugin are regular dependencies, so they are also installed
+when this library is another application's development dependency.
+Composer accepts Nextcloud OCP's `dev-stable33`,
 `dev-stable34`, and `dev-stable35` branches and selects a PHP-compatible version.
 The bundled `OCP\Util::getVersion()` patch still reports `35.0.0.0`.
+
+Composer only honors the root project's stability and plugin permissions.
+In the consuming project's Composer environment, explicitly allow an OCP
+development branch and the patch plugin:
+
+```sh
+composer config allow-plugins.cweagans/composer-patches true
+composer require --dev 'nextcloud/ocp:dev-stable33 || dev-stable34 || dev-stable35'
+```
+
+Also declare the patch in the consuming root manifest: Composer Patches 2.x
+does not discover patches from development dependencies, and local patch paths
+are relative to that root, not to this library. With the default vendor directory:
+
+```json
+{
+  "extra": {
+    "patches": {
+      "nextcloud/ocp": {
+        "Fix server version at 35.0.0.0": "vendor/rotdrop/php-to-typescript/composer-patches/nextcloud/ocp/get-version.patch"
+      }
+    }
+  }
+}
+```
+
+Install this library before adding that local patch declaration, then run
+`composer patches-relock` and `composer patches-repatch`. Adjust the path if
+the application uses a custom vendor directory.
 
 ## Usage and preserved integrations
 
@@ -89,8 +120,8 @@ Host requirements are intentionally unchanged:
   entity manager; any application specific bootstrapping (user session,
   credentials, ...) belongs into that closure. Do not commit credentials.
 - Applications not using that metadata integration should explicitly select
-  non-database collectors, as in the example. No Nextcloud stubs
-  are supplied by this package.
+  non-database collectors, as in the example. Nextcloud OCP stubs are installed
+  and autoloaded through this package's dependencies.
 - Module/metadata generation needs a `ConsoleOutputInterface` implementation
   supporting output sections, such as `ConsoleOutput`.
 - Existing Carbon/UUID type replacements remain conditional on those classes

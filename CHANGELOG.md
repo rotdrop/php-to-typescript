@@ -13,6 +13,14 @@ this file was not changed since the previous tag.
 
 ## [Unreleased]
 
+### Fixed
+
+- Install OCP and the patch plugin transitively when this library is used as
+  an application's development dependency, and register OCP autoloading in
+  both standalone and consuming Composer environments.
+- Document the consuming root project's required stability, plugin permission,
+  and patch configuration.
+
 ## [2.0.1] - 2026-10-30
 
 ### Added
