@@ -120,7 +120,13 @@ class PhpToTypeScript extends Command
     parent::__construct();
   }
 
-  /** @return bool */
+  /**
+   * Check whether a class or interface is available, triggering autoloading.
+   *
+   * @param string $class
+   *
+   * @return bool
+   */
   private function classOrInterfaceExists(string $class): bool
   {
     return class_exists($class, autoload: true) || interface_exists($class, autoload: true);
@@ -300,7 +306,7 @@ class PhpToTypeScript extends Command
         if ($this->classOrInterfaceExists($phpClass)) {
           $typeReplacements[$phpClass] = $tsClass;
         }
-	  }
+      }
     }
 
     $config = TransformerConfig::create()

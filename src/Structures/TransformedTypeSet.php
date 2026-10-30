@@ -34,6 +34,10 @@ use Spatie\TypeScriptTransformer\Structures\TypesCollection;
  */
 class TransformedTypeSet extends TransformedType
 {
+  /**
+   * @param ReflectionClass $class
+   * @param TypesCollection $types
+   */
   public function __construct(
     ReflectionClass $class,
     public TypesCollection $types = new TypesCollection(),
