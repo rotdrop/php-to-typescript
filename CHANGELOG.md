@@ -13,6 +13,13 @@ this file was not changed since the previous tag.
 
 ## [Unreleased]
 
+### Changed
+
+- **Breaking:** the CAFEVDB-specific entity manager bootstrap (`CAFEVDB_USER`,
+  `.clipassword`, encryption service) has been removed. Applications using
+  `DatabaseEntityCollector` with `--as-modules` must pass an
+  `entityManagerFactory` closure to `PhpToTypeScript`.
+
 ## [1.0.1] - 2026-10-30
 
 ### Added

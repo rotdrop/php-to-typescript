@@ -79,13 +79,13 @@ Host requirements are intentionally unchanged:
   The application supplies its toolkit, including its `Toolkit\DTO\AbstractDTO`;
   this package does not bundle it.
 - The default collectors include `DatabaseEntityCollector`. With
-  `--as-modules`, this triggers `GenerateEntityMetadata`, which still needs
-  the existing Nextcloud/CAFEVDB bootstrap, encryption service, and entity manager.
-  Its path and name formatting does not require unscoped toolkit utilities.
-  It reads `CAFEVDB_USER` (or the POSIX user) and the application's
-  `.clipassword`, as before. Do not commit credentials.
+  `--as-modules`, this triggers `GenerateEntityMetadata`, which needs the
+  application's Doctrine entity manager. Supply it through the
+  `entityManagerFactory` constructor argument, a `Closure` returning the
+  entity manager; any application specific bootstrapping (user session,
+  credentials, ...) belongs into that closure. Do not commit credentials.
 - Applications not using that metadata integration should explicitly select
-  non-database collectors, as in the example. No Nextcloud or CAFEVDB stubs
+  non-database collectors, as in the example. No Nextcloud stubs
   are supplied by this package.
 - Module/metadata generation needs a `ConsoleOutputInterface` implementation
   supporting output sections, such as `ConsoleOutput`.

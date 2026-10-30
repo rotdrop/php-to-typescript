@@ -112,8 +112,10 @@ class PhpToTypeScript extends Command
    * GenerateEntityMetadata::META_DATA_FORWARDER_FOLDER.
    *
    * @param Closure|null $entityManagerFactory Callback returning the
-   * entity manager used to read the entity metadata. If null, the
-   * CAFEVDB-specific default bootstrap is used.
+   * entity manager used to read the entity metadata. Required
+   * if the DatabaseEntityCollector is used together with --as-modules, the
+   * application is responsible for any bootstrapping (user session,
+   * credentials, ...).
    */
   public function __construct(
     protected string $devScriptsFolder,

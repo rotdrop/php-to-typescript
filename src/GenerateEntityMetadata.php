@@ -75,8 +75,9 @@ class GenerateEntityMetadata
    * which receives the entity-metadata forwarder.
    *
    * @param Closure|null $entityManagerFactory Callback returning the
-   * (Doctrine) entity manager. If null, the legacy CAFEVDB-specific
-   * bootstrap is used.
+   * (Doctrine) entity manager, including any
+   * app specific setup (user session, encryption keys, ...). Required for
+   * generating entity metadata.
    */
   public function __construct(
     private string $devScriptsFolder,
@@ -423,35 +424,19 @@ export {
   }
 
   /**
-   * Bootstrap the entity manager in the current process, mimicking what
-   * orm-cmd.php does.
+   * Obtain the entity manager from the application supplied factory.
    *
    * @return object
    */
   private function getEntityManager():object
   {
-    if ($this->entityManagerFactory !== null) {
-      return ($this->entityManagerFactory)();
+    if ($this->entityManagerFactory === null) {
+      throw new UnexpectedValueException(
+        'No entity manager factory given, pass "entityManagerFactory" to ' . PhpToTypeScript::class
+        . ' in order to generate entity metadata.'
+      );
     }
 
-    $appDir = $this->devScriptsFolder . '/..';
-
-    $cafevDbUser = getenv('CAFEVDB_USER');
-    if ($cafevDbUser === false) {
-      $cafevDbUser = posix_getpwuid(posix_getuid())['name'];
-    }
-    $cafevDbPassword = @file_get_contents($appDir . '/.clipassword');
-    if (empty($cafevDbPassword)) {
-      throw new UnexpectedValueException('Unable to obtain database credentials from ' . $appDir . '/.clipassword');
-    }
-
-    $user = \OC::$server->get(\OCP\IUserManager::class)->get($cafevDbUser);
-    \OC::$server->get(\OCP\IUserSession::class)->setUser($user);
-    \OC::$server->get(\OCA\CAFEVDB\Service\EncryptionService::class)->bind($cafevDbUser, $cafevDbPassword);
-
-    $entityManager = \OCP\Server::get(\OCA\CAFEVDB\Database\EntityManager::class);
-    $entityManager->decorateClassMetadata(false);
-
-    return $entityManager;
+    return ($this->entityManagerFactory)();
   }
 }
