@@ -13,6 +13,10 @@ this file was not changed since the previous tag.
 
 ## [Unreleased]
 
+### Added
+
+- PHPMD and PHP_CodeSniffer development tools with the CAFEVDB patches and rulesets.
+
 ## [1.0.0] - 2026-10-30
 
 ### Added

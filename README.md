@@ -123,7 +123,11 @@ application consumers; they are not applied by installing this repository:
 
 ```sh
 composer install
+composer bin phpcs install
+composer bin phpmd install
 composer test
+composer phpcs
+composer phpmd
 composer validate --strict
 composer dump-autoload --optimize --strict-psr
 find src -name '*.php' -exec php -l {} \;
