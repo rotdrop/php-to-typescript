@@ -55,22 +55,12 @@ class DTOCollector extends DefaultCollector
       return false;
     }
 
-    $appNamespace = $this->config->getAppNamespace();
-    $dtoClasses = [
-      AbstractDTO::class,
-      str_replace('RotDrop', $appNamespace, AbstractDTO::class),
-    ];
+    $dtoClass = AbstractDTO::class;
     $scopedNamespacePrefix = $this->config->getScopedNamespacePrefix();
     if (!empty($scopedNamespacePrefix)) {
-      array_unshift($dtoClasses, $scopedNamespacePrefix . '\\' . AbstractDTO::class);
+      $dtoClass = $scopedNamespacePrefix . '\\' . $dtoClass;
     }
 
-    foreach ($dtoClasses as $dtoClass) {
-      if ($class->isSubclassOf($dtoClass)) {
-        return true;
-      }
-    }
-
-    return false;
+    return $class->isSubclassOf($dtoClass);
   }
 }

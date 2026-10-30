@@ -67,10 +67,11 @@ properties. `--as-modules` also generates `php-modules/` alongside
 configuration when using php-scoper. Supply `--ns-prefix` explicitly, as in
 the existing build-system invocation.
 
-For example, `--ns-prefix='OCA\MyApp' --scoped-ns-prefix='Wrapped'` also
-recognizes DTOs extending
+For example, `--ns-prefix='OCA\MyApp' --scoped-ns-prefix='Wrapped'` recognizes
+DTOs extending
 `OCA\MyApp\Wrapped\OCA\RotDrop\Toolkit\DTO\AbstractDTO`.
-Unscoped `OCA\RotDrop\Toolkit` and legacy `OCA\MyApp\Toolkit` DTOs remain supported.
+Without `--scoped-ns-prefix`, only DTOs extending the unscoped
+`OCA\RotDrop\Toolkit\DTO\AbstractDTO` are recognized.
 
 Host requirements are intentionally unchanged:
 
