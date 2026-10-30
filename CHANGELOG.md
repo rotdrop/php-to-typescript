@@ -13,6 +13,13 @@ this file was not changed since the previous tag.
 
 ## [Unreleased]
 
+## [2.0.0] - 2026-10-30
+
+### Added
+
+- Optional `entityManagerFactory` closure for `PhpToTypeScript` and
+  `GenerateEntityMetadata`, supplying the application's entity manager.
+
 ### Changed
 
 - **Breaking:** the CAFEVDB-specific entity manager bootstrap (`CAFEVDB_USER`,
