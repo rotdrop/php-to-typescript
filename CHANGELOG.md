@@ -23,3 +23,5 @@ this file was not changed since the previous tag.
 - Support for php-scoper-wrapped toolkit namespaces in DTO collection (#3).
 - Configurable folder for the entity-metadata forwarder (#3).
 - Changelog, pull request template and tag-driven release workflows.
+- `scripts/tag-release.sh` to create and push the tag for the top-most
+  changelog release after confirmation.

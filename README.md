@@ -145,3 +145,9 @@ release, rename that section to `## [X.Y.Z] - YYYY-MM-DD` (or
 verify via `scripts/check-changelog.sh` that the matching section exists and
 that `CHANGELOG.md` changed since the previous tag, and publish a GitHub
 (pre)release using that section as release notes.
+
+After the changelog commit is on the release branch, `scripts/tag-release.sh
+[remote]` reads the top-most release version from `CHANGELOG.md` at `HEAD`.
+If its `vX.Y.Z[-rcN]` tag does not exist yet, the script asks for
+confirmation (`y`/`yes`), creates an annotated tag on `HEAD`, checks it with
+`scripts/check-changelog.sh`, and pushes it (default remote: `origin`).
