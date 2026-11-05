@@ -29,11 +29,16 @@ class PhpToTypeScriptTest extends TestCase
 
   protected function tearDown(): void
   {
-    $outputFile = $this->outputDir . '/php-types.d.ts';
-    if (file_exists($outputFile)) {
-      unlink($outputFile);
+    if (is_dir($this->outputDir)) {
+      $files = new \RecursiveIteratorIterator(
+        new \RecursiveDirectoryIterator($this->outputDir, \FilesystemIterator::SKIP_DOTS),
+        \RecursiveIteratorIterator::CHILD_FIRST,
+      );
+      foreach ($files as $file) {
+        $file->isDir() ? rmdir($file->getPathname()) : unlink($file->getPathname());
+      }
+      rmdir($this->outputDir);
     }
-    rmdir($this->outputDir);
   }
 
   public function test_it_generates_types_from_php_classes_and_enums(): void
@@ -79,6 +84,36 @@ class PhpToTypeScriptTest extends TestCase
 
     self::assertSame(2, $command->run($input, $output));
     self::assertStringContainsString('The "--output-prefix" option is mandatory.', $output->fetch());
+  }
+
+  public function test_it_generates_modules_for_top_level_types_referencing_namespaced_types(): void
+  {
+    $outputFile = $this->outputDir . '/php-types.d.ts';
+    file_put_contents($outputFile, <<<TS
+declare namespace Example.Types {
+export type Thing = string;
+}
+export type RootThing = Example.Types.Thing;
+TS);
+
+    $command = new PhpToTypeScript(devScriptsFolder: __DIR__);
+    $generateModules = new \ReflectionMethod($command, 'generateTypeScriptModules');
+    set_error_handler(static function (int $severity, string $message): bool {
+      if ($severity === E_DEPRECATED) {
+        throw new \ErrorException($message, 0, $severity);
+      }
+      return false;
+    });
+    try {
+      $generateModules->invoke($command, $this->outputDir, $outputFile, new ConsoleOutput());
+    } finally {
+      restore_error_handler();
+    }
+
+    $rootModule = file_get_contents($this->outputDir . '/php-modules/ROOT.ts');
+    self::assertIsString($rootModule);
+    self::assertStringContainsString("import type as Types from './Example/Types.ts';", $rootModule);
+    self::assertStringContainsString('export type RootThing = Types.Thing;', $rootModule);
   }
 
   public function test_it_collects_only_scoped_toolkit_dtos_when_scoped(): void
