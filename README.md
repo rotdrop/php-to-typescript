@@ -27,40 +27,18 @@ Once a release is available, use its version constraint instead of `*@dev`.
 Composer autoloads the existing namespace; no manual `addPsr4()` is needed for
 the converter.
 
-OCP and the patch plugin are regular dependencies, so they are also installed
-when this library is another application's development dependency.
-Composer accepts Nextcloud OCP's `dev-stable33`,
-`dev-stable34`, and `dev-stable35` branches and selects a PHP-compatible version.
-The bundled `OCP\Util::getVersion()` patch still reports `35.0.0.0`.
+The converter itself does not require Nextcloud OCP. This package does not
+install, patch, or register an autoloader for OCP. If the application's source
+classes or bootstrap need Nextcloud APIs, the consuming project must provide
+them and their autoloading. No OCP development-branch allowance or patch-plugin
+permission is needed merely to install this library.
 
-Composer only honors the root project's stability and plugin permissions.
-In the consuming project's Composer environment, explicitly allow an OCP
-development branch and the patch plugin:
-
-```sh
-composer config allow-plugins.cweagans/composer-patches true
-composer require --dev 'nextcloud/ocp:dev-stable33 || dev-stable34 || dev-stable35'
-```
-
-Also declare the patch in the consuming root manifest: Composer Patches 2.x
-does not discover patches from development dependencies, and local patch paths
-are relative to that root, not to this library. With the default vendor directory:
-
-```json
-{
-  "extra": {
-    "patches": {
-      "nextcloud/ocp": {
-        "Fix server version at 35.0.0.0": "vendor/rotdrop/php-to-typescript/composer-patches/nextcloud/ocp/get-version.patch"
-      }
-    }
-  }
-}
-```
-
-Install this library before adding that local patch declaration, then run
-`composer patches-relock` and `composer patches-repatch`. Adjust the path if
-the application uses a custom vendor directory.
+When upgrading from a version that supplied OCP, declare it explicitly in the
+consuming project if needed and configure its autoloading there. Remove any
+root patch declaration pointing at this package's former
+`composer-patches/nextcloud/ocp/get-version.patch`; that file is no longer
+shipped. Any application-specific OCP patches must be maintained by the
+consuming project.
 
 ## Usage and preserved integrations
 
@@ -108,7 +86,7 @@ DTOs extending
 Without `--scoped-ns-prefix`, only DTOs extending the unscoped
 `OCA\RotDrop\Toolkit\DTO\AbstractDTO` are recognized.
 
-Host requirements are intentionally unchanged:
+Host integration requirements:
 
 - Discovered application classes and their dependencies must be autoloadable.
   The application supplies its toolkit, including its `Toolkit\DTO\AbstractDTO`;
@@ -120,8 +98,7 @@ Host requirements are intentionally unchanged:
   entity manager; any application specific bootstrapping (user session,
   credentials, ...) belongs into that closure. Do not commit credentials.
 - Applications not using that metadata integration should explicitly select
-  non-database collectors, as in the example. Nextcloud OCP stubs are installed
-  and autoloaded through this package's dependencies.
+  non-database collectors, as in the example.
 - Module/metadata generation needs a `ConsoleOutputInterface` implementation
   supporting output sections, such as `ConsoleOutput`.
 - Existing Carbon/UUID type replacements remain conditional on those classes
@@ -133,7 +110,9 @@ The following changes belong in `rotdrop/nextcloud-app-build-system` and its
 application consumers; they are not applied by installing this repository:
 
 1. In the build-system's `scripts/` Composer environment, run the installation
-   commands above. Keep its existing Nextcloud OCP patch/plugin setup.
+   commands above. Keep its existing Nextcloud OCP installation, autoloading,
+   and patch/plugin setup if required by its applications, but do not reference
+   this package's removed OCP patch.
 2. Keep loading `scripts/vendor/autoload.php` in application wrappers, together
    with their application, toolkit, scoped-dependency, and Nextcloud bootstrap
    code. Remove the manual converter `addPsr4()` pointing at
@@ -173,6 +152,10 @@ composer audit
 The tests exercise the converter against small standalone PHP fixtures. Full
 database-metadata verification still requires the consuming Nextcloud
 application and its existing runtime configuration.
+
+PHPCS and PHPMD use isolated Composer environments under `vendor-bin/`.
+Their patch plugins and bundled patches are development-tool requirements,
+not dependencies of applications installing this library.
 
 GitHub Actions runs `composer test` on PHP 8.2 through 8.5 for pushes and pull requests.
 The Tests workflow can also be started manually.
