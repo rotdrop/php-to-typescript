@@ -13,6 +13,13 @@ this file was not changed since the previous tag.
 
 ## [Unreleased]
 
+## [2.0.3] - 2026-11-05
+
+### Fixed
+
+- Generate module imports for top-level TypeScript types that reference
+  namespaced types.
+
 ## [2.0.2] - 2026-10-30
 
 ### Fixed
