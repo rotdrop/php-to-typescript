@@ -580,17 +580,22 @@ EOF;
               }
             }
           }
-          $line = str_replace($currentFullNS . '.', '', $line);
+          if ($currentFullNS !== null) {
+            $line = str_replace($currentFullNS . '.', '', $line);
+          }
 
           foreach ($allNamespaces as $existingNamespace) {
             // if (preg_match('/[[:^alnum:]]' . preg_quote($existingNamespace . '.') . '/', $typeSpec)) {
-            if (str_starts_with($existingNamespace, $currentFullNS) && $existingNamespace != $currentFullNS) {
+            if ($currentFullNS === null && $existingNamespace == self::ROOT_NS) {
+              $line = str_replace(self::ROOT_NS . '.', '', $line);
+              continue;
+            } elseif ($currentFullNS !== null && str_starts_with($existingNamespace, $currentFullNS) && $existingNamespace != $currentFullNS) {
               $namespaceForMatch = substr($existingNamespace, strlen($currentFullNS) + 1);
             } else {
               $namespaceForMatch = $existingNamespace;
             }
             if (preg_match('/(([^:]+):|export type)(.*)([[:^alnum:]])(' . preg_quote($namespaceForMatch . '.') . ')/', $line)) {
-              $selfNS = explode('.', $currentFullNS);
+              $selfNS = $currentFullNS === null ? [] : explode('.', $currentFullNS);
               $refNS = explode('.', $existingNamespace);
               $textSection->writeln('CROSSREF ' . $currentFullNS . ' ' . $existingNamespace, options: OutputInterface::VERBOSITY_NORMAL);
               $prefix = [];
@@ -618,6 +623,8 @@ EOF;
               if (!empty($selfNS) && !empty($refNS)) {
                 // can move one level further down.
                 array_shift($selfNS);
+                $importNamespace = array_shift($refNS);
+              } elseif (empty($selfNS) && !empty($refNS)) {
                 $importNamespace = array_shift($refNS);
               } else {
                 array_pop($prefix);
@@ -654,6 +661,11 @@ EOF;
     if (!empty($currentData)) {
       // Top-level types. We assume these come last, if this changes
       // _this_ code thas to be adjusted.
+      if (!empty($headerData)) {
+        $headerData = array_values(array_unique($headerData));
+        sort($headerData);
+        $currentData = implode(PHP_EOL, $headerData) . PHP_EOL . PHP_EOL . $currentData;
+      }
       file_put_contents($modulesDir . self::ROOT_MODULE, $currentData);
     }
   }
