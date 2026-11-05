@@ -112,7 +112,7 @@ TS);
 
     $rootModule = file_get_contents($this->outputDir . '/php-modules/ROOT.ts');
     self::assertIsString($rootModule);
-    self::assertStringContainsString("import type as Types from './Example/Types.ts';", $rootModule);
+    self::assertStringContainsString("import type * as Types from './Example/Types.ts';", $rootModule);
     self::assertStringContainsString('export type RootThing = Types.Thing;', $rootModule);
   }
 
