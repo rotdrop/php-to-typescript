@@ -661,6 +661,11 @@ EOF;
     if (!empty($currentData)) {
       // Top-level types. We assume these come last, if this changes
       // _this_ code thas to be adjusted.
+      if (!empty($headerData)) {
+        $headerData = array_values(array_unique($headerData));
+        sort($headerData);
+        $currentData = implode(PHP_EOL, $headerData) . PHP_EOL . PHP_EOL . $currentData;
+      }
       file_put_contents($modulesDir . self::ROOT_MODULE, $currentData);
     }
   }
