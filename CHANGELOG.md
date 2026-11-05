@@ -13,6 +13,14 @@ this file was not changed since the previous tag.
 
 ## [Unreleased]
 
+### Removed
+
+- Remove the unused Nextcloud OCP dependency, its version patch, and its
+  automatic PSR-4 registration, along with the root Composer patch-plugin
+  dependency and development-stability settings. Consuming applications that
+  need OCP must install and autoload it themselves and maintain any required
+  patches; the former bundled OCP patch is no longer shipped.
+
 ## [2.0.3] - 2026-11-05
 
 ### Fixed
